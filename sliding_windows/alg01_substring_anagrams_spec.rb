@@ -52,3 +52,36 @@ def substring_anagrams(string, anagram)
 
   count
 end
+
+# string, anagram = "caabab", "aba"
+
+# ["c", "a", "a", "b", "a", "b"]
+# first iteration:
+# left = 0, right = 0
+# right - left + 1
+# 0 - 0 + 1 = 1 == 3
+
+# second iteration:
+# left = 0, right = 1
+# right - left + 1
+# 1 - 0 + 1 = 2 == 3
+
+# third iteration:
+# left = 0, right = 2
+# right - left + 1
+# 2 - 0 + 1 = 3 == 3
+
+# fourth iteration:
+# left = 1, right = 2
+# right - left + 1
+# 2 - 1 + 1 = 2 == 3
+
+# fifth iteration:
+# left = 1, right = 3
+# right - left + 1
+# 3 - 1 + 1 = 3 == 3
+
+# sixth iteration:
+# left = 2, right = 3
+# right - left + 1
+# 3 - 2 + 1 = 2 == 3
