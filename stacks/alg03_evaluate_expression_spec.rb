@@ -13,44 +13,63 @@ describe "#evaluate_expression" do
       expect(evaluate_expression("(1+(4+5+2)-3)+(6+8)")).to eq(23)
     end
   end
+
+  describe "an expression with multiplication and division" do
+    it "returns the result of evaluating the expression" do
+      expect(evaluate_expression("2*(5+5*2)/3")).to eq(10)
+    end
+  end
 end
 
+# Evaluates a math expression string (supports +, -, *, /, parentheses).
+#
+# Key idea: scan left to right, resolving each number as soon as we hit the
+# *next* operator. Store resolved values in a stack and sum at the end.
+# * and / are applied immediately (higher precedence); + and - just push onto
+# the stack (deferred) so they all get added up together at the end.
+# Parentheses save/restore the current stack so the inner result becomes a
+# single number passed back to the outer expression.
 def evaluate_expression(expression)
-  stack = []
-  current_number, sign, result = 0, 1, 0
-  expression.each_char do |char|
-    if char.match?(/\d/)
-      current_number = current_number * 10 + char.to_i
-    # If the current character is an operator, add the current number to the result
-    # after multiplying it by its sign.
-    elsif char == "+" || char == "-"
-      result  += current_number * sign
+  return 0 if expression.empty?
 
-      # Update the sign and reset the current number.
-      sign = char == "-" ? -1 : 1
-      current_number = 0
-    # If the current character is a an opening parenthesis, a new nested expression is starting.
-    elsif char == "("
-      # Save the current result and sign values by pushing them onto the stack,
-      # then reset their values to start calculating the new nested expression.
-      stack << result
-      stack << sign
+  context_stack = [] # saves outer scope when entering parentheses
+  local_stack = []   # holds resolved operand values for the current scope
+  number = 0         # builds up multi-digit numbers digit by digit
+  operator = "+"     # implicit leading '+' so the first number is pushed as-is
 
-      result, sign = 0, 1
-    # If the current character is a closing parenthesis, a nested expression has ended.
-    elsif char == ")"
-      # Finalize the result of the current nested expression.
-      result += current_number * sign
-
-      # Apply the sign of the current nested expression's result before adding this result
-      # to the result of the outer expression.
-      result *= stack.pop
-      result += stack.pop
-
-      current_number = 0
+  # Push the completed number onto local_stack, applying the pending operator.
+  # + and - defer (push positive/negative); * and / resolve immediately.
+  apply = lambda do |n|
+    case operator
+    when "+" then local_stack.push(n)
+    when "-" then local_stack.push(-n)
+    when "*" then local_stack.push(local_stack.pop * n)
+    when "/" then local_stack.push(local_stack.pop / n)
     end
   end
 
-  # Finalize the result of the overall expression.
-  result + current_number * sign
+  expression.each_char do |char|
+    if char.match?(/\d/)
+      number = number * 10 + char.to_i  # accumulate digits into a full number
+    elsif char == "("
+      # Pause the outer scope and start fresh inside the parentheses.
+      context_stack.push([local_stack, operator])
+      local_stack = []
+      operator = "+"
+      number = 0
+    elsif char == ")"
+      # Wrap up the inner scope: flush last number, sum it, restore outer scope.
+      apply.call(number)
+      sub_result = local_stack.sum
+      local_stack, operator = context_stack.pop
+      number = sub_result  # treat the whole sub-expression as one number
+    elsif char.match?(/[+\-*\/]/)
+      apply.call(number)  # the previous number is complete; apply it
+      operator = char
+      number = 0
+    end
+  end
+
+  apply.call(number) # flush the last number (no trailing operator in the loop)
+  local_stack.sum
 end
