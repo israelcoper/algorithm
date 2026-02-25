@@ -1,4 +1,4 @@
-# frozen_string: true
+# frozen_string_literal: true
 
 describe "#substring_anagrams" do
   describe "an empty string" do

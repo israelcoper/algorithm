@@ -1,4 +1,4 @@
-# frozen_string: true
+# frozen_string_literal: true
 
 describe "#longest_uniform_substring_after_replacements" do
   describe "an empty string" do

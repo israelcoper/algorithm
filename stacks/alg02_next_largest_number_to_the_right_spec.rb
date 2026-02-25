@@ -1,4 +1,4 @@
-# frozen_string: true
+# frozen_string_literal: true
 
 describe "#next_largest_number_to_the_right" do
   describe "an empty array" do

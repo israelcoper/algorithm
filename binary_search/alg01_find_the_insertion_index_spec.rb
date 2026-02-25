@@ -1,4 +1,4 @@
-# frozen_string: true
+# frozen_string_literal: true
 
 describe "#find_the_insertion_index" do
   describe "target is in the array" do

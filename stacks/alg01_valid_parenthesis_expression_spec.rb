@@ -1,4 +1,4 @@
-# frozen_string: true
+# frozen_string_literal: true
 
 describe "#valid_parenthesis_expression" do
   describe "has no valid parenthesis expression" do

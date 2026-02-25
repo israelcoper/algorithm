@@ -1,4 +1,4 @@
-# frozen_string: true
+# frozen_string_literal: true
 
 describe "#find_the_target_in_a_rotated_sorted_array" do
   describe "target is not in the array" do

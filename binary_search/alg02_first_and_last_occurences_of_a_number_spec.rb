@@ -1,4 +1,4 @@
-# frozen_string: true
+# frozen_string_literal: true
 
 describe "#first_and_last_occurences_of_a_number" do
   describe "target is not in the array" do
